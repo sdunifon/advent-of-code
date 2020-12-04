@@ -29,15 +29,19 @@ impl<'a> Forest<'a> {
     }
 }
 
-// impl<'a, const COUNT: usize> std::fmt::Display for Forest<'a, COUNT> {
-//     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-//         let output = self.lines.join("\n");
-//         write!(f, "{}", output)
-//     }
-// }
-
-// impl Display for ForestLine<'_> {
-//     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-//         write!(f, "-{}-", self.0)
-//     }
-// }
+impl<'a> std::fmt::Display for Forest<'a> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let output = self.lines.join("\n");
+        write!(f, "{}", output)
+    }
+}
+impl<'a> ForestLine<'a> {
+    fn emoji_output(&self) -> String {
+        self.0.replace(".", "⬛").replace("#", "🌲")
+    }
+}
+impl<'a> Display for ForestLine<'a> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "-{}-", self.emoji_output())
+    }
+}
