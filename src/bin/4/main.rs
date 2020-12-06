@@ -1,4 +1,4 @@
-use std::{collections::HashMap, iter::FromIterator};
+use std::collections::HashMap;
 
 use input::INPUT;
 mod input;
@@ -26,27 +26,19 @@ impl<'a> PassportDb<'a> {
 #[derive(Debug, Clone)]
 struct Passport<'a> {
     fields: HashMap<&'a str, &'a str>,
-    // fields: &'a str,
 }
 
-// impl FromIterator {}
 impl<'a> Passport<'a> {
     fn new(input: &'a str) -> Passport {
-        let fields: Vec<&str> = input
+        let fields: HashMap<_, _> = input
             .split(&['\n', ' '][..])
             .filter(|str| !str.is_empty())
-            .collect();
-        // let hash_strs: Vec<(&str, &str)> = fields
-        let hash_strs: Vec<(&str, &str)> = fields
-            .iter()
             .map(|str| {
                 let mut split_iter = str.split(":").take(2);
                 (split_iter.next().unwrap(), split_iter.next().unwrap())
             })
             .collect();
 
-        let hash_map: HashMap<_, _> = hash_strs.into_iter().collect();
-
-        Passport { fields: hash_map }
+        Passport { fields }
     }
 }
