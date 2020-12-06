@@ -1,3 +1,5 @@
+use std::{collections::HashSet, iter::FromIterator};
+
 use input::INPUT;
 
 mod input;
@@ -24,19 +26,32 @@ struct Group {
     // answer_sets: Vec<&'a str>,
     answer_sets: Vec<AnswerSet>,
 }
-
-#[derive(Debug)]
-struct AnswerSet {
-    answers: Vec<char>,
+impl Group {
+    fn group_answers(&self) -> HashSet<char> {
+        self.answer_sets
+            .iter()
+            .fold(HashSet::new(), |acc, set| {
+                acc.union(&set.0).collect::<HashSet<&char>>(
+            })
+            .collect()
+    }
 }
+
+#[derive(Debug, Clone)]
+struct AnswerSet(HashSet<char>);
+// {
+//     answers: HashSet<char>,
+// }
 
 impl AnswerSet {
     fn new(input: &str) -> AnswerSet {
-        AnswerSet {
-            answers: input.chars().collect(),
-        }
+        AnswerSet(input.chars().collect())
+        // AnswerSet {
+        //     answers: input.chars().collect(),
+        // }
     }
 }
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -67,9 +82,20 @@ mod tests {
         let groups = load_groups();
         let group3 = groups.get(2).unwrap();
 
-        assert_eq!(
-            group3.answer_sets.get(2).unwrap().answers.get(2).unwrap(),
-            &'e'
-        );
+        assert!(group3.answer_sets.get(2).unwrap().0.get(&'2').is_some());
+    }
+    #[test]
+    fn hash_set_test() {
+        let groups = load_groups();
+        let answer_sets = groups.get(0).unwrap().answer_sets;
+        let answer_set_0 = answer_sets[0];
+        let answer_set_1 = answer_sets[1];
+        let union = answer_set_0.0.union(&answer_set_1.0);
+    }
+    #[test]
+    fn group_answer_test() {
+        let groups = load_groups();
+
+        assert_eq!(groups.get(0).unwrap().answer_sets.len(), 2);
     }
 }
