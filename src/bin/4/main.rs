@@ -1,11 +1,11 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, error::Error};
 
 use input::INPUT;
 mod input;
 
 fn main() {
     let passport_db = PassportDb::new(INPUT);
-    dbg!(passport_db);
+    println!("valid count:{}", passport_db.valid_count());
 }
 
 #[derive(Debug)]
@@ -20,6 +20,13 @@ impl<'a> PassportDb<'a> {
             .map(|x| Passport::new(x))
             .collect::<Vec<Passport>>();
         PassportDb { passports: a }
+    }
+    fn valid_count(&self) -> usize {
+        // dbg!(self.passports.iter().filter(|passport| !passport.valid()));
+        self.passports
+            .iter()
+            .filter(|passport| passport.valid())
+            .count()
     }
 }
 
@@ -40,5 +47,20 @@ impl<'a> Passport<'a> {
             .collect();
 
         Passport { fields }
+    }
+    fn valid(&self) -> bool {
+        if self.fields.len() >= 8 {
+            return true;
+        } else if self.fields.get("cid").is_none() && self.fields.len() == 7 {
+            return true;
+        }
+
+        self.field_validator().unwrap();
+        return false;
+    }
+    fn field_validator(&self) -> Result<bool, Box<dyn Error>> {
+        self.fields.get("hcl").unwrap();
+
+        Ok(true)
     }
 }
